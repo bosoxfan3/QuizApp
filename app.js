@@ -40,12 +40,16 @@ const STATE = {
 //we want to hide the start page and show the question page
 
 
-$('.js-start-button').css('border','10px solid red').submit(function(event) {
+$('.js-start-button').on('click', function(event) {
   event.preventDefault();
   console.log('start button clicked');
-  $('.js-start-page').attr('hidden');
+  $(this).parents('div').attr('hidden', true);
   $('.js-question-template').removeAttr('hidden');
 });
 
 
 
+// function renderQuestion() {
+//   let result = '';
+//   let template = 
+// }
