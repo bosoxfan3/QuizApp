@@ -28,7 +28,7 @@ const STATE = {
   ],
   currentQuestion: 0,
   userScore: 0,
-  route: 'start'
+  route: 'start' || "question" || "feedback" || "score"
 
   // {User's answer choice(s)}
   // {What is the current question?}
@@ -69,6 +69,13 @@ function renderApp(state, elements) {
   else if (state.route === 'final-feedback') {
     renderFinalFeedbackPage(state, elements[state.route]);
   }
+}
+
+renderStartPage() {
+  $('.js-start-page').removeAttr('hidden');
+  $('.js-question-template').attr('hidden', true);
+  $('.js-answer-template').attr('hidden', true);
+  $('.js-final-score-page').attr('hidden', true);
 }
 
 // function renderQuestion() {
