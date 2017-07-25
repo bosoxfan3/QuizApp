@@ -29,6 +29,7 @@ const STATE = {
   ],
   currentQuestion: 0,
   userScore: 0,
+  lastQuestionCorrect: null,
   route: 'start' || "question" || "feedback" || "score",
   title: 'My Cool Quiz App'
 
@@ -107,17 +108,18 @@ function renderQuestionPage(state, element){
 
 $("form[name='current-question']").submit(function(event) {
   event.preventDefault();
+  let currentQuestion = STATE.questions[STATE.currentQuestion];
   let answer = $("input[name='movie-title']:checked").val();
   answer = parseInt(answer,10);
+  STATE.lastQuestionCorrect = (answer === currentQuestion.correctIndex);
   STATE.route = 'answer-feedback';
   renderApp(STATE, PAGE_ELEMENTS);
-  return answer;
 });
 
 
 function renderAnswerFeedbackPage(state, element, answer) {
   let currentQuestion = state.questions[state.currentQuestion];
-  if (answer === currentQuestion.correctIndex) {
+  if (STATE.lastQuestionCorrect) {
     $('.js-feedback').text('Correct!');
   } else {
     $('.js-feedback').text(`Incorrect. The correct answer was ${CORRECT_INDEX}`);
