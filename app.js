@@ -30,8 +30,7 @@ const STATE = {
   currentQuestion: 0,
   userScore: 0,
   lastQuestionCorrect: null,
-  route: 'start' || "question" || "feedback" || "score",
-  title: 'My Cool Quiz App'
+  route: 'start'
 
   // {User's answer choice(s)}
   // {What is the current question?}
@@ -43,12 +42,7 @@ const PAGE_ELEMENTS = {
   'question': $('.js-question-template'),
   'answer-feedback': $('.js-answer-template'),
   'final-feedback': $('.js-final-score-page')
-}
-
-//console.log(STATE.questions[1].question);
-
-//we want to be able to click start and go to the first question.
-//we want to hide the start page and show the question page
+};
 
 function renderApp(state, elements) {
   // default to hiding all routes, then show the current route
@@ -58,19 +52,15 @@ function renderApp(state, elements) {
   elements[state.route].show();
 
   if (state.route === 'start') {
-      console.log('render Start Page');
-      //renderStartPage(state, elements[state.route]);
+    //renderStartPage(state, elements[state.route]);
   }
   else if (state.route === 'question') {
-      console.log('render Question Page');
-      renderQuestionPage(state, elements[state.route]);
+    renderQuestionPage(state, elements[state.route]);
   }
   else if (state.route === 'answer-feedback') {
-    console.log('render Feedback Page');
     renderAnswerFeedbackPage(state, elements[state.route]);
   }
   else if (state.route === 'final-feedback') {
-    console.log('render Final Page');
     renderFinalFeedbackPage(state, elements[state.route]);
   }
 }
@@ -100,14 +90,13 @@ function renderQuestionPage(state, element){
   $('.js-current-question-number').text(`${STATE.currentQuestion + 1}`);
   $('.js-movie-quote').text(`What movie is this quote from: "${currentQuestion.question}"`);
   $('.choices').html(choices);
-  //STATE.currentQuestion++;
 } 
 
 
-$("form[name='current-question']").submit(function(event) {
+$('form[name=\'current-question\']').submit(function(event) {
   event.preventDefault();
   let currentQuestion = STATE.questions[STATE.currentQuestion];
-  let answer = $("input[name='movie-title']:checked").val();
+  let answer = $('input[name=\'movie-title\']:checked').val();
   answer = parseInt(answer,10);
   STATE.lastQuestionCorrect = (answer === currentQuestion.correctIndex);
   STATE.route = 'answer-feedback';
@@ -123,7 +112,7 @@ function renderAnswerFeedbackPage(state, element) {
   } else {
     $('.js-feedback').text(`Incorrect. The correct answer was ${currentQuestion.answers[currentQuestion.correctIndex]}`);
   }
-  $('.js-current-score').text(`Current score: ${STATE.userScore} out of 5`)
+  $('.js-current-score').text(`Current score: ${STATE.userScore} out of 5`);
   STATE.currentQuestion++;
 }
 
