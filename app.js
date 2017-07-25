@@ -27,15 +27,25 @@ const STATE = {
       correctIndex: 3
     }
   ],
+  i: 0,
   currentQuestion: 0,
+  shuffledArray: [],
   userScore: 0,
   lastQuestionCorrect: null,
-  route: 'start' || "question" || "feedback" || "score",
-  title: 'My Cool Quiz App'
+  route: 'start' || 'question' || 'feedback' || 'score',
+  title: 'My Cool Quiz App',
+};
 
-  // {User's answer choice(s)}
-  // {What is the current question?}
-  // {Score? Anything else?}
+const stateVar = STATE;
+const  randomArray = randomArrayGenerator();
+
+function randomArrayGenerator(){
+  var tempArray = [];
+  for (var a = [0, 1, 2, 3, 4], i = a.length; i--; ) {
+    	var random = a.splice(Math.floor(Math.random() * (i + 1)), 1)[0];
+    tempArray.push(random);
+  }
+  return tempArray;
 };
 
 const PAGE_ELEMENTS = {
@@ -43,7 +53,7 @@ const PAGE_ELEMENTS = {
   'question': $('.js-question-template'),
   'answer-feedback': $('.js-answer-template'),
   'final-feedback': $('.js-final-score-page')
-}
+};
 
 //console.log(STATE.questions[1].question);
 
@@ -58,12 +68,12 @@ function renderApp(state, elements) {
   elements[state.route].show();
 
   if (state.route === 'start') {
-      console.log('render Start Page');
-      //renderStartPage(state, elements[state.route]);
+    console.log('render Start Page');
+    //renderStartPage(state, elements[state.route]);
   }
   else if (state.route === 'question') {
-      console.log('render Question Page');
-      renderQuestionPage(state, elements[state.route]);
+    console.log('render Question Page');
+    renderQuestionPage(state, elements[state.route]);
   }
   else if (state.route === 'answer-feedback') {
     console.log('render Feedback Page');
@@ -81,6 +91,7 @@ function renderApp(state, elements) {
 $('.js-start-button').on('click', function(event) {
   event.preventDefault();
   console.log('start button clicked');
+  STATE.currentQuestion = randomArray[STATE.i];
   STATE.route = 'question';
   renderApp(STATE, PAGE_ELEMENTS); 
 });
@@ -100,14 +111,13 @@ function renderQuestionPage(state, element){
   $('.js-current-question-number').text(`${STATE.currentQuestion + 1}`);
   $('.js-movie-quote').text(`What movie is this quote from: "${currentQuestion.question}"`);
   $('.choices').html(choices);
-  //STATE.currentQuestion++;
 } 
 
 
-$("form[name='current-question']").submit(function(event) {
+$('form[name=\'current-question\']').submit(function(event) {
   event.preventDefault();
   let currentQuestion = STATE.questions[STATE.currentQuestion];
-  let answer = $("input[name='movie-title']:checked").val();
+  let answer = $('input[name=\'movie-title\']:checked').val();
   answer = parseInt(answer,10);
   STATE.lastQuestionCorrect = (answer === currentQuestion.correctIndex);
   STATE.route = 'answer-feedback';
@@ -123,12 +133,12 @@ function renderAnswerFeedbackPage(state, element) {
   } else {
     $('.js-feedback').text(`Incorrect. The correct answer was ${currentQuestion.answers[currentQuestion.correctIndex]}`);
   }
-  $('.js-current-score').text(`Current score: ${STATE.userScore} out of 5`)
-  STATE.currentQuestion++;
+  $('.js-current-score').text(`Current score: ${STATE.userScore} out of 5`);
+  STATE.currentQuestion = randomArray[STATE.i++];
 }
 
 $('.js-next').click(function(event){
-  if (STATE.currentQuestion < STATE.questions.length) {
+  if (STATE.i < 5) {
     STATE.route = 'question';
   } else {
     STATE.route = 'final-feedback';
@@ -158,4 +168,3 @@ $('.js-restart').click(function(event){
 $(document).ready(function() {
   renderApp(STATE, PAGE_ELEMENTS);
 });
-
