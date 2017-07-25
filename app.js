@@ -37,6 +37,8 @@ const STATE = {
   // {Score? Anything else?}
 };
 
+const CORRECT_INDEX = STATE.questions[STATE.currentQuestion].answers[STATE.questions[STATE.currentQuestion].correctIndex];
+
 const PAGE_ELEMENTS = {
   'start': $('.js-start-page'),
   'question': $('.js-question-template'),
@@ -99,15 +101,31 @@ function renderQuestionPage(state, element){
   $('.js-current-question-number').text(`${STATE.currentQuestion + 1}`);
   $('.js-movie-quote').text(`What movie is this quote from: "${currentQuestion.question}"`);
   $('.choices').html(choices);
-  STATE.currentQuestion++;
+  //STATE.currentQuestion++;
 } 
+
 
 $("form[name='current-question']").submit(function(event) {
   event.preventDefault();
   let answer = $("input[name='movie-title']:checked").val();
-  //answer = parseInt(answer,10);
-  console.log(answer);
+  answer = parseInt(answer,10);
+  STATE.route = 'answer-feedback';
+  renderApp(STATE, PAGE_ELEMENTS);
+  return answer;
 });
+
+
+function renderAnswerFeedbackPage(state, element, answer) {
+  let currentQuestion = state.questions[state.currentQuestion];
+  if (answer === currentQuestion.correctIndex) {
+    $('.js-feedback').text('Correct!');
+  } else {
+    $('.js-feedback').text(`Incorrect. The correct answer was ${CORRECT_INDEX}`);
+  }
+
+  STATE.currentQuestion++;
+}
+
 
 $(document).ready(function() {
   renderApp(STATE, PAGE_ELEMENTS);
