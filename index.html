@@ -17,7 +17,7 @@
     <div class="js-question-template" hidden>
         <h1>Question <span class="js-current-question-number"></span></h1>
         <h3 class='js-movie-quote'></h3>
-        <form name='current-question'>
+        <form name='current-question' id='current-question'>
             <fieldset class="choices">
             </fieldset>
             <button class="js-submit" type="submit">Submit</button>
@@ -26,15 +26,15 @@
 
     <div class="js-answer-template" hidden>
         <h2>Result</h2>
-        <p class="js-feedback">Correct/Incorrect</p>
-        <p>Current score: x out of 5</p>
+        <p class="js-feedback"></p>
+        <p class="js-current-score"></p>
         <button class="js-next">Next Question</button>
     </div>
 
     <div class="js-final-score-page" hidden>
         <h1>Your Final Score</h1>
         <p class="js-final-score-count"></p>
-        <button type='submit'>Go Again!</button>
+        <button class="js-restart">Go Again!</button>
     </div>
 
 

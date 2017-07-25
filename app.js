@@ -38,8 +38,6 @@ const STATE = {
   // {Score? Anything else?}
 };
 
-const CORRECT_INDEX = STATE.questions[STATE.currentQuestion].answers[STATE.questions[STATE.currentQuestion].correctIndex];
-
 const PAGE_ELEMENTS = {
   'start': $('.js-start-page'),
   'question': $('.js-question-template'),
@@ -117,17 +115,45 @@ $("form[name='current-question']").submit(function(event) {
 });
 
 
-function renderAnswerFeedbackPage(state, element, answer) {
+function renderAnswerFeedbackPage(state, element) {
   let currentQuestion = state.questions[state.currentQuestion];
   if (STATE.lastQuestionCorrect) {
     $('.js-feedback').text('Correct!');
+    STATE.userScore++;
   } else {
-    $('.js-feedback').text(`Incorrect. The correct answer was ${CORRECT_INDEX}`);
+    $('.js-feedback').text(`Incorrect. The correct answer was ${currentQuestion.answers[currentQuestion.correctIndex]}`);
   }
-
+  $('.js-current-score').text(`Current score: ${STATE.userScore} out of 5`)
   STATE.currentQuestion++;
 }
 
+$('.js-next').click(function(event){
+  if (STATE.currentQuestion < STATE.questions.length) {
+    STATE.route = 'question';
+  } else {
+    STATE.route = 'final-feedback';
+  }
+  renderApp(STATE, PAGE_ELEMENTS);
+});
+
+function renderFinalFeedbackPage(state, element) {
+  $('.js-final-score-count').text(`Your final score is: ${STATE.userScore} out of 5`);
+}
+
+function restartQuiz(){
+  STATE.currentQuestion = 0;
+  STATE.userScore = 0;
+  STATE.lastQuestionCorrect = null;
+  document.getElementById('current-question').reset();
+}
+
+$('.js-restart').click(function(event){
+  console.log('js restart clicked');
+  event.preventDefault();
+  restartQuiz();
+  STATE.route = 'start';
+  renderApp(STATE, PAGE_ELEMENTS);
+});
 
 $(document).ready(function() {
   renderApp(STATE, PAGE_ELEMENTS);
