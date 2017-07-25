@@ -1,3 +1,4 @@
+debugger;
 const STATE = {
   questions: [
     {
@@ -28,7 +29,8 @@ const STATE = {
   ],
   currentQuestion: 0,
   userScore: 0,
-  route: 'start' || "question" || "feedback" || "score"
+  route: 'start' || "question" || "feedback" || "score",
+  title: 'My Cool Quiz App'
 
   // {User's answer choice(s)}
   // {What is the current question?}
@@ -57,6 +59,9 @@ $('.js-start-button').on('click', function(event) {
 
 
 function renderApp(state, elements) {
+  console.log(PAGE_ELEMENTS);
+  console.log(elements);
+  console.log(PAGE_ELEMENTS === elements);
   // default to hiding all routes, then show the current route
   Object.keys(elements).forEach(function(route) {
     elements[route].hide();
@@ -79,6 +84,10 @@ function renderApp(state, elements) {
     console.log('render Final Page');
     renderFinalFeedbackPage(state, elements[state.route]);
   }
+}
+
+function renderStartPage(state, element){
+  element.find('h1').html(state.title);
 }
 
 function renderQuestionPage(state, element){
