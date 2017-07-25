@@ -2,27 +2,27 @@ const STATE = {
   questions: [
     {
       question: 'Go ahead, make my day',
-      answer: ['Die Hard', 'Sudden Impact', 'Independence Day', 'Godfather'],
+      answers: ['Die Hard', 'Sudden Impact', 'Independence Day', 'Godfather'],
       correctIndex: 1
     },
     {
       question: 'I\'m walking here! I\'m walking here!',
-      answer: ['Taxi Driver', 'Forrest Gump', 'Midnight Cowboy', 'Gangs of New York'],
+      answers: ['Taxi Driver', 'Forrest Gump', 'Midnight Cowboy', 'Gangs of New York'],
       correctIndex: 2
     },
     {
       question: 'Show me the money!',
-      answer: ['Jerry Maguire', 'Wolf of Wall Street', 'Goodfellas', 'Ocean\'s Eleven'],
+      answers: ['Jerry Maguire', 'Wolf of Wall Street', 'Goodfellas', 'Ocean\'s Eleven'],
       correctIndex: 0
     },
     {
       question: 'After all, tomorrow is another day!',
-      answer: ['Day After Tomorrow', 'Casablanca', 'Gone With The Wind', 'The Terminator'],
+      answers: ['Day After Tomorrow', 'Casablanca', 'Gone With The Wind', 'The Terminator'],
       correctIndex: 2
     },
     {
       question: 'You can\'t handle the truth!',
-      answer: ['Jaws', 'Citizen Kane', 'When Harry Met Sally', 'A Few Good Men'],
+      answers: ['Jaws', 'Citizen Kane', 'When Harry Met Sally', 'A Few Good Men'],
       correctIndex: 3
     }
   ],
@@ -35,6 +35,13 @@ const STATE = {
   // {Score? Anything else?}
 };
 
+const PAGE_ELEMENTS = {
+  'start': $('.js-start-page'),
+  'question': $('.js-question-template'),
+  'answer-feedback': $('.js-answer-template'),
+  'final-feedback': $('.js-final-score-page')
+}
+
 //console.log(STATE.questions[1].question);
 
 //we want to be able to click start and go to the first question.
@@ -44,9 +51,8 @@ const STATE = {
 $('.js-start-button').on('click', function(event) {
   event.preventDefault();
   console.log('start button clicked');
-  $(this).parents('div').attr('hidden', true);
-  renderQuestion();
-  $('.js-question-template').removeAttr('hidden'); 
+  STATE.route = "question";
+  renderApp(STATE, PAGE_ELEMENTS); 
 });
 
 
@@ -58,74 +64,38 @@ function renderApp(state, elements) {
   elements[state.route].show();
 
   if (state.route === 'start') {
+      console.log('render Start Page');
       renderStartPage(state, elements[state.route]);
   }
   else if (state.route === 'question') {
+      console.log('render Question Page');
       renderQuestionPage(state, elements[state.route]);
   }
   else if (state.route === 'answer-feedback') {
+    console.log('render Feedback Page');
     renderAnswerFeedbackPage(state, elements[state.route]);
   }
   else if (state.route === 'final-feedback') {
+    console.log('render Final Page');
     renderFinalFeedbackPage(state, elements[state.route]);
   }
 }
 
-renderStartPage() {
-  $('.js-start-page').removeAttr('hidden');
-  $('.js-question-template').attr('hidden', true);
-  $('.js-answer-template').attr('hidden', true);
-  $('.js-final-score-page').attr('hidden', true);
-}
-
-// function renderQuestion() {
-//   let result = '';
-//   let index = STATE.currentQuestion;
-//   let template = `<form name='current-question' class='question-form' action='/'>
-//   <h1>Question ${STATE.currentQuestion + 1}</h1>
-//   <fieldset>
-//     <h3>${STATE.questions[index].question}</h3>
-//     <p>What movie is this quote from?</p>
-//     <input type="radio" name="movie-title" id="movie-title-1" value="0"><label for="movie-title-1">  ${STATE.questions[index].answer[0]}</label>
-//       <br>
-//       <input type="radio" name="movie-title" id="movie-title-2" value="1"><label for="movie-title-2">  ${STATE.questions[index].answer[1]}</label>
-//       <br>
-//       <input type="radio" name="movie-title" id="movie-title-3" value="2"><label for="movie-title-3">  ${STATE.questions[index].answer[2]}</label>
-//       <br>
-//       <input type="radio" name="movie-title" id="movie-title-4" value="3"><label for="movie-title-4">  ${STATE.questions[index].answer[3]}</label>
-//       <br>
-//       <br>
-//       <button class="js-submit" type="button">Submit</button>
-//       </fieldset>
-// </form>`;
-
-// result += template;
-// $('.js-question-template').append(result);
-// STATE.currentQuestion++;
-// }
-
-const PAGE_ELEMENTS = {
-  'start': $('.js-start-page'),
-  'question': $('.js-question-template'),
-  'answer-feedback': $('.js-answer-template'),
-  'final-feedback': $('.js-final-score-page')
-}
-
-function renderChoices(state, element){
+function renderQuestionPage(state, element){
+  
   var currentQuestion = state.questions[state.currentQuestion];
   var choices = state.questions[state.currentQuestion].answers.map(function(choice, index){
     return (
       `<li>
         <label>
-        <input type="radio" name="user-answer" value=${index} id="choice-${index} required> ${choice}
+        <input type="radio" name="user-answer" value=${index} id="choice-${index} required/> ${choice}
         </label>
         </li>`
     );
   });
+  $('.choices').html(choices);
   STATE.currentQuestion++;
-}
-
-renderChoices(question, element.find('.choices'));
+} 
 
 $("form[name='current-question']").submit(function(event) {
   event.preventDefault();
@@ -134,7 +104,7 @@ $("form[name='current-question']").submit(function(event) {
   console.log(answer);
 });
 
-$(document).ready(function(){
-//  console.log('DOM Loaded!')
+$(document).ready(function() {
+  renderApp(STATE, PAGE_ELEMENTS);
 });
 
