@@ -1,4 +1,4 @@
-debugger;
+
 const STATE = {
   questions: [
     {
@@ -49,19 +49,7 @@ const PAGE_ELEMENTS = {
 //we want to be able to click start and go to the first question.
 //we want to hide the start page and show the question page
 
-
-$('.js-start-button').on('click', function(event) {
-  event.preventDefault();
-  console.log('start button clicked');
-  STATE.route = "question";
-  renderApp(STATE, PAGE_ELEMENTS); 
-});
-
-
 function renderApp(state, elements) {
-  console.log(PAGE_ELEMENTS);
-  console.log(elements);
-  console.log(PAGE_ELEMENTS === elements);
   // default to hiding all routes, then show the current route
   Object.keys(elements).forEach(function(route) {
     elements[route].hide();
@@ -70,7 +58,7 @@ function renderApp(state, elements) {
 
   if (state.route === 'start') {
       console.log('render Start Page');
-      renderStartPage(state, elements[state.route]);
+      //renderStartPage(state, elements[state.route]);
   }
   else if (state.route === 'question') {
       console.log('render Question Page');
@@ -86,22 +74,30 @@ function renderApp(state, elements) {
   }
 }
 
-function renderStartPage(state, element){
-  element.find('h1').html(state.title);
-}
+// function renderStartPage(state, element){
+  
+// }
+$('.js-start-button').on('click', function(event) {
+  event.preventDefault();
+  console.log('start button clicked');
+  STATE.route = 'question';
+  renderApp(STATE, PAGE_ELEMENTS); 
+});
+
 
 function renderQuestionPage(state, element){
   
-  var currentQuestion = state.questions[state.currentQuestion];
-  var choices = state.questions[state.currentQuestion].answers.map(function(choice, index){
+  let currentQuestion = state.questions[state.currentQuestion];
+  let choices = state.questions[state.currentQuestion].answers.map(function(title, index){
     return (
-      `<li>
-        <label>
-        <input type="radio" name="user-answer" value=${index} id="choice-${index} required/> ${choice}
-        </label>
-        </li>`
+      `
+        <input type='radio' name='movie-title' value='${index}' id='choice-${index}' required/><label for='choice-${index}'> ${title}</label> 
+        <br>
+      `
     );
   });
+  $('.js-current-question-number').text(`${STATE.currentQuestion + 1}`);
+  $('.js-movie-quote').text(`What movie is this quote from: "${currentQuestion.question}"`);
   $('.choices').html(choices);
   STATE.currentQuestion++;
 } 
