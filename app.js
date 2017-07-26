@@ -27,17 +27,14 @@ const STATE = {
       correctIndex: 3
     }
   ],
-  i: 0,
+  questionOrder: randomArrayGenerator(),
   currentQuestion: 0,
-  shuffledArray: [],
   userScore: 0,
   lastQuestionCorrect: null,
   route: 'start' || 'question' || 'feedback' || 'score',
   title: 'My Cool Quiz App',
 };
 
-const stateVar = STATE;
-const  randomArray = randomArrayGenerator();
 
 function randomArrayGenerator(){
   var tempArray = [];
@@ -55,7 +52,7 @@ const PAGE_ELEMENTS = {
   'final-feedback': $('.js-final-score-page')
 };
 
-//console.log(STATE.questions[1].question);
+
 
 //we want to be able to click start and go to the first question.
 //we want to hide the start page and show the question page
@@ -85,13 +82,10 @@ function renderApp(state, elements) {
   }
 }
 
-// function renderStartPage(state, element){
-  
-// }
+
 $('.js-start-button').on('click', function(event) {
   event.preventDefault();
   console.log('start button clicked');
-  STATE.currentQuestion = randomArray[STATE.i];
   STATE.route = 'question';
   renderApp(STATE, PAGE_ELEMENTS); 
 });
@@ -99,8 +93,8 @@ $('.js-start-button').on('click', function(event) {
 
 function renderQuestionPage(state, element){
   
-  let currentQuestion = state.questions[state.currentQuestion];
-  let choices = state.questions[state.currentQuestion].answers.map(function(title, index){
+  let currentQuestion = state.questions[state.questionOrder[state.currentQuestion]];
+  let choices = currentQuestion.answers.map(function(title, index){
     return (
       `
         <input type='radio' name='movie-title' value='${index}' id='choice-${index}' required/><label for='choice-${index}'> ${title}</label> 
@@ -108,37 +102,38 @@ function renderQuestionPage(state, element){
       `
     );
   });
-  $('.js-current-question-number').text(`${STATE.currentQuestion + 1}`);
+  $('.js-current-question-number').text(`${state.currentQuestion + 1}`);
   $('.js-movie-quote').text(`What movie is this quote from: "${currentQuestion.question}"`);
   $('.choices').html(choices);
 } 
 
 
 $('form[name=\'current-question\']').submit(function(event) {
+  
   event.preventDefault();
-  let currentQuestion = STATE.questions[STATE.currentQuestion];
+  let currentQuestion = STATE.questions[STATE.questionOrder[STATE.currentQuestion]];
   let answer = $('input[name=\'movie-title\']:checked').val();
   answer = parseInt(answer,10);
-  STATE.lastQuestionCorrect = (answer === currentQuestion.correctIndex);
+  STATE.lastQuestionCorrect = (answer === STATE.questions[STATE.questionOrder[STATE.currentQuestion]].correctIndex);
   STATE.route = 'answer-feedback';
   renderApp(STATE, PAGE_ELEMENTS);
 });
 
 
 function renderAnswerFeedbackPage(state, element) {
-  let currentQuestion = state.questions[state.currentQuestion];
-  if (STATE.lastQuestionCorrect) {
+  let currentQuestion = state.questions[state.questionOrder[state.currentQuestion]];
+  if (state.lastQuestionCorrect) {
     $('.js-feedback').text('Correct!');
-    STATE.userScore++;
+    state.userScore++;
   } else {
     $('.js-feedback').text(`Incorrect. The correct answer was ${currentQuestion.answers[currentQuestion.correctIndex]}`);
   }
-  $('.js-current-score').text(`Current score: ${STATE.userScore} out of 5`);
-  STATE.currentQuestion = randomArray[STATE.i++];
+  $('.js-current-score').text(`Current score: ${state.userScore} out of 5`);
+  state.currentQuestion = (state.currentQuestion)+1;
 }
 
 $('.js-next').click(function(event){
-  if (STATE.i < 5) {
+  if (STATE.currentQuestion <= 4) {
     STATE.route = 'question';
   } else {
     STATE.route = 'final-feedback';
@@ -147,10 +142,11 @@ $('.js-next').click(function(event){
 });
 
 function renderFinalFeedbackPage(state, element) {
-  $('.js-final-score-count').text(`Your final score is: ${STATE.userScore} out of 5`);
+  $('.js-final-score-count').text(`Your final score is: ${STATE.userScore} out of 5`); 
 }
 
 function restartQuiz(){
+  STATE.questionOrder = randomArrayGenerator();
   STATE.currentQuestion = 0;
   STATE.userScore = 0;
   STATE.lastQuestionCorrect = null;
